@@ -12,11 +12,21 @@ router.post('/', function(req, res, next) {
 
   shell.exec('gcc ' + filename, {silent:true}, function(exit, output, error){
     if ( exit ){
-      res.json(error)
+      var result = {
+        "compiled": false,
+        "exit": exit,
+        "output": output,
+        "error": error
+      }
+      res.json(result)
+
+      fs.unlinkSync(filename)
+      fs.unlinkSync('tmp/stdin')
     }
 
     shell.exec('./a.out < tmp/stdin', {silent:true}, function(exit, output, error){
       var result = {
+        "compiled": true,
         "exit": exit,
         "output": output,
         "error": error
